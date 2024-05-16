@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "llama.cpp/ggml-metal.h"
+#include "whisper.cpp/ggml-metal.h"
 #include "llamafile.h"
 #include "log.h"
 #include <assert.h>
@@ -32,33 +32,33 @@
 #include <time.h>
 #include <unistd.h>
 
-__static_yoink("llama.cpp/ggml.h");
+__static_yoink("whisper.cpp/ggml.h");
 __static_yoink("llamafile/llamafile.h");
-__static_yoink("llama.cpp/ggml-impl.h");
-__static_yoink("llama.cpp/ggml-alloc.h");
-__static_yoink("llama.cpp/ggml-metal.m");
-__static_yoink("llama.cpp/ggml-metal.h");
-__static_yoink("llama.cpp/ggml-common.h");
-__static_yoink("llama.cpp/ggml-quants.h");
-__static_yoink("llama.cpp/ggml-backend.h");
-__static_yoink("llama.cpp/ggml-metal.metal");
-__static_yoink("llama.cpp/ggml-backend-impl.h");
+__static_yoink("whisper.cpp/ggml-impl.h");
+__static_yoink("whisper.cpp/ggml-alloc.h");
+__static_yoink("whisper.cpp/ggml-metal.m");
+__static_yoink("whisper.cpp/ggml-metal.h");
+__static_yoink("whisper.cpp/ggml-common.h");
+__static_yoink("whisper.cpp/ggml-quants.h");
+__static_yoink("whisper.cpp/ggml-backend.h");
+__static_yoink("whisper.cpp/ggml-metal.metal");
+__static_yoink("whisper.cpp/ggml-backend-impl.h");
 
 static const struct Source {
     const char *zip;
     const char *name;
 } srcs[] = {
-    {"/zip/llama.cpp/ggml.h", "ggml.h"},
+    {"/zip/whisper.cpp/ggml.h", "ggml.h"},
     {"/zip/llamafile/llamafile.h", "llamafile.h"},
-    {"/zip/llama.cpp/ggml-impl.h", "ggml-impl.h"},
-    {"/zip/llama.cpp/ggml-metal.h", "ggml-metal.h"},
-    {"/zip/llama.cpp/ggml-alloc.h", "ggml-alloc.h"},
-    {"/zip/llama.cpp/ggml-common.h", "ggml-common.h"},
-    {"/zip/llama.cpp/ggml-quants.h", "ggml-quants.h"},
-    {"/zip/llama.cpp/ggml-backend.h", "ggml-backend.h"},
-    {"/zip/llama.cpp/ggml-metal.metal", "ggml-metal.metal"},
-    {"/zip/llama.cpp/ggml-backend-impl.h", "ggml-backend-impl.h"},
-    {"/zip/llama.cpp/ggml-metal.m", "ggml-metal.m"}, // must come last
+    {"/zip/whisper.cpp/ggml-impl.h", "ggml-impl.h"},
+    {"/zip/whisper.cpp/ggml-metal.h", "ggml-metal.h"},
+    {"/zip/whisper.cpp/ggml-alloc.h", "ggml-alloc.h"},
+    {"/zip/whisper.cpp/ggml-common.h", "ggml-common.h"},
+    {"/zip/whisper.cpp/ggml-quants.h", "ggml-quants.h"},
+    {"/zip/whisper.cpp/ggml-backend.h", "ggml-backend.h"},
+    {"/zip/whisper.cpp/ggml-metal.metal", "ggml-metal.metal"},
+    {"/zip/whisper.cpp/ggml-backend-impl.h", "ggml-backend-impl.h"},
+    {"/zip/whisper.cpp/ggml-metal.m", "ggml-metal.m"}, // must come last
 };
 
 ggml_backend_t ggml_backend_reg_metal_init(const char *, void *);

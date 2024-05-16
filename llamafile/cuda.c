@@ -15,9 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "llama.cpp/ggml-backend-impl.h"
-#include "llama.cpp/ggml-cuda.h"
-#include "llama.cpp/ggml-metal.h"
+#include "whisper.cpp/ggml-backend-impl.h"
+#include "whisper.cpp/ggml-cuda.h"
+#include "whisper.cpp/ggml-metal.h"
 #include "llamafile/llamafile.h"
 #include "llamafile/log.h"
 #include "llamafile/x.h"
@@ -37,18 +37,18 @@
 #include <time.h>
 #include <unistd.h>
 
-__static_yoink("llama.cpp/ggml.h");
+__static_yoink("whisper.cpp/ggml.h");
 __static_yoink("llamafile/compcap.cu");
 __static_yoink("llamafile/tinyblas.h");
 __static_yoink("llamafile/tinyblas.cu");
-__static_yoink("llama.cpp/ggml-impl.h");
+__static_yoink("whisper.cpp/ggml-impl.h");
 __static_yoink("llamafile/llamafile.h");
-__static_yoink("llama.cpp/ggml-cuda.h");
-__static_yoink("llama.cpp/ggml-alloc.h");
-__static_yoink("llama.cpp/ggml-cuda.cu");
-__static_yoink("llama.cpp/ggml-common.h");
-__static_yoink("llama.cpp/ggml-backend.h");
-__static_yoink("llama.cpp/ggml-backend-impl.h");
+__static_yoink("whisper.cpp/ggml-cuda.h");
+__static_yoink("whisper.cpp/ggml-alloc.h");
+__static_yoink("whisper.cpp/ggml-cuda.cu");
+__static_yoink("whisper.cpp/ggml-common.h");
+__static_yoink("whisper.cpp/ggml-backend.h");
+__static_yoink("whisper.cpp/ggml-backend-impl.h");
 
 #define THESTRING(x) #x
 #define STRINGIFY(x) THESTRING(x)
@@ -71,18 +71,18 @@ static const struct Source {
     const char *zip;
     const char *name;
 } srcs[] = {
-    {"/zip/llama.cpp/ggml.h", "ggml.h"},
+    {"/zip/whisper.cpp/ggml.h", "ggml.h"},
     {"/zip/llamafile/compcap.cu", "compcap.cu"},
     {"/zip/llamafile/llamafile.h", "llamafile.h"},
     {"/zip/llamafile/tinyblas.h", "tinyblas.h"},
     {"/zip/llamafile/tinyblas.cu", "tinyblas.cu"},
-    {"/zip/llama.cpp/ggml-impl.h", "ggml-impl.h"},
-    {"/zip/llama.cpp/ggml-cuda.h", "ggml-cuda.h"},
-    {"/zip/llama.cpp/ggml-alloc.h", "ggml-alloc.h"},
-    {"/zip/llama.cpp/ggml-common.h", "ggml-common.h"},
-    {"/zip/llama.cpp/ggml-backend.h", "ggml-backend.h"},
-    {"/zip/llama.cpp/ggml-backend-impl.h", "ggml-backend-impl.h"},
-    {"/zip/llama.cpp/ggml-cuda.cu", "ggml-cuda.cu"}, // must come last
+    {"/zip/whisper.cpp/ggml-impl.h", "ggml-impl.h"},
+    {"/zip/whisper.cpp/ggml-cuda.h", "ggml-cuda.h"},
+    {"/zip/whisper.cpp/ggml-alloc.h", "ggml-alloc.h"},
+    {"/zip/whisper.cpp/ggml-common.h", "ggml-common.h"},
+    {"/zip/whisper.cpp/ggml-backend.h", "ggml-backend.h"},
+    {"/zip/whisper.cpp/ggml-backend-impl.h", "ggml-backend-impl.h"},
+    {"/zip/whisper.cpp/ggml-cuda.cu", "ggml-cuda.cu"}, // must come last
 };
 
 GGML_CALL int ggml_backend_cuda_reg_devices(void);

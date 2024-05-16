@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "llama.cpp/ggml-cuda.h"
-#include "llama.cpp/ggml-metal.h"
+#include "whisper.cpp/ggml-cuda.h"
+#include "whisper.cpp/ggml-metal.h"
 #include "llamafile.h"
 #include "llamafile/log.h"
 #include <limits.h>

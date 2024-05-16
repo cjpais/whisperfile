@@ -13,11 +13,13 @@ include build/rules.mk
 
 include llamafile/BUILD.mk
 include llama.cpp/BUILD.mk
+include whisper.cpp/BUILD.mk
 
 # the root package is `o//` by default
 # building a package also builds its sub-packages
 .PHONY: o/$(MODE)/
-o/$(MODE)/: o/$(MODE)/llama.cpp o/$(MODE)/llamafile
+#o/$(MODE)/: o/$(MODE)/llama.cpp o/$(MODE)/llamafile
+o/$(MODE)/: o/$(MODE)/llama.cpp o/$(MODE)/whisper.cpp o/$(MODE)/llamafile 
 
 # for installing to `make PREFIX=/usr/local`
 .PHONY: install
@@ -38,6 +40,7 @@ install:	llamafile/zipalign.1					\
 	$(INSTALL) o/$(MODE)/llamafile/zipalign $(PREFIX)/bin/zipalign
 	$(INSTALL) o/$(MODE)/llamafile/tokenize $(PREFIX)/bin/llamafile-tokenize
 	$(INSTALL) o/$(MODE)/llama.cpp/main/main $(PREFIX)/bin/llamafile
+	$(INSTALL) o/$(MODE)/whisper.cpp/server/server $(PREFIX)/bin/whisper-server
 	$(INSTALL) o/$(MODE)/llama.cpp/imatrix/imatrix $(PREFIX)/bin/llamafile-imatrix
 	$(INSTALL) o/$(MODE)/llama.cpp/quantize/quantize $(PREFIX)/bin/llamafile-quantize
 	$(INSTALL) build/llamafile-convert $(PREFIX)/bin/llamafile-convert

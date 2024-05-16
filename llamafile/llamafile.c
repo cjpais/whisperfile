@@ -77,6 +77,8 @@ static struct llamafile *llamafile_open_zip(const char *prog, const char *fname,
         goto Failure;
     file->size = rc;
 
+    fprintf(stderr, "llamafile_open_zip: %s\nsize: %d\n", prog, file->size);
+
     // read the last 64kb of file
     // the zip file format magic can be anywhere in there
     int amt;
@@ -261,6 +263,8 @@ static struct llamafile *llamafile_open_file(const char *fname, const char *mode
 
 struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
 
+    fprintf(stderr, "llamafile_open_gguf: %s\n", fname);
+
     // support filenames like `foo.zip@weights.gguf`
     const char *p;
     if ((p = strchr(fname, '@')))
@@ -268,9 +272,13 @@ struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
 
     // open from file or from our own executable if it doesn't exist
     struct llamafile *file;
+    fprintf(stderr, "opening from local\n");
     if (!(file = llamafile_open_file(fname, mode))) {
+        fprintf(stderr, "failed: opening from local errorno %s\n", errno);
         if (errno == ENOENT) {
+            fprintf(stderr, "opening from zip\n");
             if (!(file = llamafile_open_zip(GetProgramExecutableName(), fname, mode))) {
+                fprintf(stderr, "failed: opening from zip\n");
                 errno = ENOENT;
                 return 0;
             }
@@ -280,6 +288,8 @@ struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
         }
     }
 
+    fprintf(stderr, "opened from local\n");
+
     // check that this is a .gguf file
     ssize_t rc;
     char buf[8];
@@ -287,6 +297,7 @@ struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
         llamafile_close(file);
         return 0;
     }
+    fprintf(stderr, "read %d bytes\n", rc);
     if (rc != 8) {
         llamafile_close(file);
         errno = EIO;
@@ -296,6 +307,8 @@ struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
         errno = EINVAL;
         return file;
     }
+
+    fprintf(stderr, "file size: %d\n", llamafile_tell(file));
 
     // otherwise assume user opened a .zip or .llamafile
     llamafile_close(file);

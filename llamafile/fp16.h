@@ -1,8 +1,8 @@
 // -*- mode:c++;indent-tabs-mode:nil;c-basic-offset:4;coding:utf-8 -*-
 // vi: set et ft=cpp ts=4 sts=4 sw=4 fenc=utf-8 :vi
 #pragma once
-#include "llama.cpp/ggml-impl.h"
-#include "llama.cpp/ggml.h"
+#include "whisper.cpp/ggml-impl.h"
+#include "whisper.cpp/ggml.h"
 
 class llamafile_fp16 {
   public:

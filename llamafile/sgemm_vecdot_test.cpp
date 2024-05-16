@@ -18,7 +18,7 @@
 #include "ansiblas.h"
 #include "bench.h"
 #include "float.h"
-#include "llama.cpp/ggml.h"
+#include "whisper.cpp/ggml.h"
 #include "macros.h"
 #include "numba.h"
 #include "sgemm.h"
