@@ -24,36 +24,15 @@ o/$(MODE)/: o/$(MODE)/llama.cpp o/$(MODE)/whisper.cpp o/$(MODE)/llamafile
 # for installing to `make PREFIX=/usr/local`
 .PHONY: install
 install:	llamafile/zipalign.1					\
-		llama.cpp/main/main.1					\
-		llama.cpp/imatrix/imatrix.1				\
-		llama.cpp/quantize/quantize.1				\
-		llama.cpp/perplexity/perplexity.1			\
-		llama.cpp/llava/llava-quantize.1			\
 		o/$(MODE)/llamafile/zipalign				\
-		o/$(MODE)/llamafile/tokenize				\
-		o/$(MODE)/llama.cpp/main/main				\
-		o/$(MODE)/llama.cpp/imatrix/imatrix			\
-		o/$(MODE)/llama.cpp/quantize/quantize			\
-		o/$(MODE)/llama.cpp/perplexity/perplexity		\
-		o/$(MODE)/llama.cpp/llava/llava-quantize
+		o/$(MODE)/whisper.cpp/server/server \
 	mkdir -p $(PREFIX)/bin
 	$(INSTALL) o/$(MODE)/llamafile/zipalign $(PREFIX)/bin/zipalign
-	$(INSTALL) o/$(MODE)/llamafile/tokenize $(PREFIX)/bin/llamafile-tokenize
-	$(INSTALL) o/$(MODE)/llama.cpp/main/main $(PREFIX)/bin/llamafile
 	$(INSTALL) o/$(MODE)/whisper.cpp/server/server $(PREFIX)/bin/whisper-server
-	$(INSTALL) o/$(MODE)/llama.cpp/imatrix/imatrix $(PREFIX)/bin/llamafile-imatrix
-	$(INSTALL) o/$(MODE)/llama.cpp/quantize/quantize $(PREFIX)/bin/llamafile-quantize
 	$(INSTALL) build/llamafile-convert $(PREFIX)/bin/llamafile-convert
 	$(INSTALL) build/llamafile-upgrade-engine $(PREFIX)/bin/llamafile-upgrade-engine
-	$(INSTALL) o/$(MODE)/llama.cpp/perplexity/perplexity $(PREFIX)/bin/llamafile-perplexity
-	$(INSTALL) o/$(MODE)/llama.cpp/llava/llava-quantize $(PREFIX)/bin/llava-quantize
 	mkdir -p $(PREFIX)/share/man/man1
 	$(INSTALL) -m 0644 llamafile/zipalign.1 $(PREFIX)/share/man/man1/zipalign.1
-	$(INSTALL) -m 0644 llama.cpp/main/main.1 $(PREFIX)/share/man/man1/llamafile.1
-	$(INSTALL) -m 0644 llama.cpp/imatrix/imatrix.1 $(PREFIX)/share/man/man1/llamafile-imatrix.1
-	$(INSTALL) -m 0644 llama.cpp/quantize/quantize.1 $(PREFIX)/share/man/man1/llamafile-quantize.1
-	$(INSTALL) -m 0644 llama.cpp/perplexity/perplexity.1 $(PREFIX)/share/man/man1/llamafile-perplexity.1
-	$(INSTALL) -m 0644 llama.cpp/llava/llava-quantize.1 $(PREFIX)/share/man/man1/llava-quantize.1
 
 .PHONY: check
 check: o/$(MODE)/llamafile/check
