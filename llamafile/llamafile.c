@@ -263,8 +263,6 @@ static struct llamafile *llamafile_open_file(const char *fname, const char *mode
 
 struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
 
-    fprintf(stderr, "llamafile_open_gguf: %s\n", fname);
-
     // support filenames like `foo.zip@weights.gguf`
     const char *p;
     if ((p = strchr(fname, '@')))
@@ -272,13 +270,9 @@ struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
 
     // open from file or from our own executable if it doesn't exist
     struct llamafile *file;
-    fprintf(stderr, "opening from local\n");
     if (!(file = llamafile_open_file(fname, mode))) {
-        fprintf(stderr, "failed: opening from local errorno %s\n", errno);
         if (errno == ENOENT) {
-            fprintf(stderr, "opening from zip\n");
             if (!(file = llamafile_open_zip(GetProgramExecutableName(), fname, mode))) {
-                fprintf(stderr, "failed: opening from zip\n");
                 errno = ENOENT;
                 return 0;
             }
@@ -288,7 +282,6 @@ struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
         }
     }
 
-    fprintf(stderr, "opened from local\n");
 
     // check that this is a .gguf file
     ssize_t rc;
@@ -297,18 +290,18 @@ struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
         llamafile_close(file);
         return 0;
     }
-    fprintf(stderr, "read %d bytes\n", rc);
     if (rc != 8) {
         llamafile_close(file);
         errno = EIO;
         return 0;
     }
-    if (ZIP_READ32(buf) == ZIP_READ32("GGUF")) {
+    fprintf(stderr, "fp open gguf: %p\n", file->fp);
+    // if (ZIP_READ32(buf) == ZIP_READ32("GGUF")) {
+        // fprintf(stderr, "THIS IS A gguf file\n");
         errno = EINVAL;
         return file;
-    }
+    // }
 
-    fprintf(stderr, "file size: %d\n", llamafile_tell(file));
 
     // otherwise assume user opened a .zip or .llamafile
     llamafile_close(file);
@@ -321,6 +314,10 @@ FILE *llamafile_fp(struct llamafile *file) {
 
 size_t llamafile_size(struct llamafile *file) {
     return file->size;
+}
+
+size_t llamafile_position(struct llamafile *file) {
+    return file->position;
 }
 
 void *llamafile_content(struct llamafile *file) {
@@ -388,6 +385,12 @@ long llamafile_write(struct llamafile *file, const void *ptr, size_t len) {
     if (ret != 1)
         return 0;
     return len;
+}
+
+bool llamafile_eof(struct llamafile *file) {
+    if (file->fp)
+        return feof(file->fp);
+    return file->position >= file->size;
 }
 
 void llamafile_close(struct llamafile *file) {

@@ -885,6 +885,7 @@ static whisper_global g_state;
 
 template<typename T>
 static void read_safe(whisper_model_loader * loader, T & dest) {
+    // TODO is byteswap value necessary?
     loader->read(loader->context, &dest, sizeof(T));
     BYTESWAP_VALUE(dest);
 }
@@ -1266,10 +1267,12 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
     auto & model = wctx.model;
     auto & vocab = wctx.vocab;
 
+    llamafile * fin = (llamafile *) loader->context;
+
     // verify magic
     {
         uint32_t magic;
-        read_safe(loader, magic);
+        llamafile_read(fin, &magic, sizeof(magic));
         if (magic != GGML_FILE_MAGIC) {
             WHISPER_LOG_ERROR("%s: invalid model data (bad magic)\n", __func__);
             return false;
@@ -1280,17 +1283,17 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
     {
         auto & hparams = model.hparams;
 
-        read_safe(loader, hparams.n_vocab);
-        read_safe(loader, hparams.n_audio_ctx);
-        read_safe(loader, hparams.n_audio_state);
-        read_safe(loader, hparams.n_audio_head);
-        read_safe(loader, hparams.n_audio_layer);
-        read_safe(loader, hparams.n_text_ctx);
-        read_safe(loader, hparams.n_text_state);
-        read_safe(loader, hparams.n_text_head);
-        read_safe(loader, hparams.n_text_layer);
-        read_safe(loader, hparams.n_mels);
-        read_safe(loader, hparams.ftype);
+        llamafile_read(fin, &hparams.n_vocab, sizeof(hparams.n_vocab));
+        llamafile_read(fin, &hparams.n_audio_ctx, sizeof(hparams.n_audio_ctx));
+        llamafile_read(fin, &hparams.n_audio_state, sizeof(hparams.n_audio_state));
+        llamafile_read(fin, &hparams.n_audio_head, sizeof(hparams.n_audio_head));
+        llamafile_read(fin, &hparams.n_audio_layer, sizeof(hparams.n_audio_layer));
+        llamafile_read(fin, &hparams.n_text_ctx, sizeof(hparams.n_text_ctx));
+        llamafile_read(fin, &hparams.n_text_state, sizeof(hparams.n_text_state));
+        llamafile_read(fin, &hparams.n_text_head, sizeof(hparams.n_text_head));
+        llamafile_read(fin, &hparams.n_text_layer, sizeof(hparams.n_text_layer));
+        llamafile_read(fin, &hparams.n_mels, sizeof(hparams.n_mels));
+        llamafile_read(fin, &hparams.ftype, sizeof(hparams.ftype));
 
         assert(hparams.n_text_state == hparams.n_audio_state);
 
@@ -1351,18 +1354,18 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
     {
         auto & filters = wctx.model.filters;
 
-        read_safe(loader, filters.n_mel);
-        read_safe(loader, filters.n_fft);
+        llamafile_read(fin, &filters.n_mel, sizeof(filters.n_mel));
+        llamafile_read(fin, &filters.n_fft, sizeof(filters.n_fft));
 
         filters.data.resize(filters.n_mel * filters.n_fft);
-        loader->read(loader->context, filters.data.data(), filters.data.size() * sizeof(float));
+        llamafile_read(fin, filters.data.data(), filters.data.size() * sizeof(float));
         BYTESWAP_FILTERS(filters);
     }
 
     // load vocab
     {
         int32_t n_vocab = 0;
-        read_safe(loader, n_vocab);
+        llamafile_read(fin, &n_vocab, sizeof(n_vocab));
 
         //if (n_vocab != model.hparams.n_vocab) {
         //    WHISPER_LOG_ERROR("%s: invalid model file '%s' (bad vocab size %d != %d)\n",
@@ -1377,11 +1380,11 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
 
         for (int i = 0; i < n_vocab; i++) {
             uint32_t len;
-            read_safe(loader, len);
+            llamafile_read(fin, &len, sizeof(len));
 
             if (len > 0) {
                 tmp.resize(len);
-                loader->read(loader->context, &tmp[0], tmp.size()); // read to buffer
+                llamafile_read(fin, &tmp[0], tmp.size());
                 word.assign(&tmp[0], tmp.size());
             } else {
                 // seems like we have an empty-string token in multi-language models (i = 50256)
@@ -1698,24 +1701,24 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
             int32_t length;
             int32_t ttype;
 
-            read_safe(loader, n_dims);
-            read_safe(loader, length);
-            read_safe(loader, ttype);
+            llamafile_read(fin, &n_dims, sizeof(n_dims));
+            llamafile_read(fin, &length, sizeof(length));
+            llamafile_read(fin, &ttype, sizeof(ttype));
 
-            if (loader->eof(loader->context)) {
+            if (llamafile_eof(fin)) {
                 break;
             }
 
             int32_t nelements = 1;
             int32_t ne[4] = { 1, 1, 1, 1 };
             for (int i = 0; i < n_dims; ++i) {
-                read_safe(loader, ne[i]);
+                llamafile_read(fin, &ne[i], sizeof(ne[i]));
                 nelements *= ne[i];
             }
 
             std::string name;
             std::vector<char> tmp(length); // create a buffer
-            loader->read(loader->context, &tmp[0], tmp.size()); // read to buffer
+            llamafile_read(fin, &tmp[0], tmp.size());
             name.assign(&tmp[0], tmp.size());
 
             if (model.tensors.find(name) == model.tensors.end()) {
@@ -1752,13 +1755,13 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
 
             if (ggml_backend_buffer_is_host(model.buffer)) {
                 // for the CPU and Metal backend, we can read directly into the tensor
-                loader->read(loader->context, tensor->data, ggml_nbytes(tensor));
+                llamafile_read(fin, tensor->data, ggml_nbytes(tensor));
                 BYTESWAP_TENSOR(tensor);
             } else {
                 // read into a temporary buffer first, then copy to device memory
                 read_buf.resize(ggml_nbytes(tensor));
 
-                loader->read(loader->context, read_buf.data(), read_buf.size());
+                llamafile_read(fin, read_buf.data(), read_buf.size());
 
                 ggml_backend_tensor_set(tensor, read_buf.data(), 0, ggml_nbytes(tensor));
             }
@@ -3461,58 +3464,12 @@ struct whisper_context_params whisper_context_default_params() {
 
 struct whisper_context * whisper_init_from_file_with_params_no_state(const char * path_model, struct whisper_context_params params) {
     WHISPER_LOG_INFO("%s: loading model from '%s'\n", __func__, path_model);
-// #ifdef _msc_ver
-//     convert utf-8 path to wide string (utf-16) for windows, resolving character encoding issues.
-//     std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-//     std::wstring path_model_wide = converter.from_bytes(path_model);
-//     auto fin = std::ifstream(path_model_wide, std::ios::binary);
-// #else
-
-//     // todo something like this.
-//     // open from file or from our own executable if it doesn't exist
-//     // struct llamafile *file;
-//     // if (!(file = llamafile_open_file(fname, mode))) {
-//     //     if (errno == ENOENT) {
-//     //         if (!(file = llamafile_open_zip(GetProgramExecutableName(), fname, mode))) {
-//     //             errno = ENOENT;
-//     //             return 0;
-//     //         }
-//     //         return file;
-//     //     } else {
-//     //         return 0;
-//     //     }
-//     // }
-
-// #endif
-    struct llamafile *fin;
-    fin = llamafile_open_gguf(path_model, "rbe");
-
-    if (!fin) {
-        WHISPER_LOG_ERROR("%s: failed to open '%s'\n", __func__, path_model);
-        return nullptr;
-    }
 
     whisper_model_loader loader = {};
 
-    loader.context = &fin;
-
-    loader.read = [](void * ctx, void * output, size_t read_size) {
-        llamafile * fin = (llamafile*)ctx;
-        llamafile_read(fin, output, read_size);
-        return read_size;
-    };
-
-    loader.eof = [](void * ctx) {
-        llamafile * fin = (llamafile*)ctx;
-        FILE * fp = llamafile_fp(fin);
-
-        return feof(fp) != 0;
-    };
-
-    loader.close = [](void * ctx) {
-        llamafile * fin = (llamafile*)ctx;
-        llamafile_close(fin);
-    };
+    struct llamafile *fin;
+    fin = llamafile_open_gguf(path_model, "rb");
+    loader.context = fin;
 
     auto ctx = whisper_init_with_params_no_state(&loader, params);
 
@@ -3575,15 +3532,16 @@ struct whisper_context * whisper_init_with_params_no_state(struct whisper_model_
 
     whisper_context * ctx = new whisper_context;
     ctx->params = params;
+    llamafile * file = (llamafile *)loader->context;
 
     if (!whisper_model_load(loader, *ctx)) {
-        loader->close(loader->context);
+        llamafile_close(file);
         WHISPER_LOG_ERROR("%s: failed to load model\n", __func__);
         delete ctx;
         return nullptr;
     }
 
-    loader->close(loader->context);
+    llamafile_close(file);
 
     return ctx;
 }
