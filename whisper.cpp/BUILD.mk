@@ -58,14 +58,3 @@ $(WHISPER_CPP_OBJS): whisper.cpp/BUILD.mk
 .PHONY: o/$(MODE)/whisper.cpp
 o/$(MODE)/whisper.cpp: 					\
 		o/$(MODE)/whisper.cpp/server		
-
-# o/$(MODE)/whisper.cpp/server/whisper_server: $(WHISPER_CPP_OBJS)
-# 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
-
-# o/$(MODE)/whisper.cpp/server/whisper_server: $(WHISPER_CPP_SERVER_OBJS) $(WHISPER_CPP_OBJS)
-# 	$(LINK.o) $^ -o $@
-
-# o/$(MODE)/whisper.cpp/server: o/$(MODE)/whisper.cpp/server/whisper_server
-# 	@true
-
-# .PHONY: o/$(MODE)/whisper.cpp/server

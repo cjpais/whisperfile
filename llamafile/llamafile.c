@@ -295,17 +295,11 @@ struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
         errno = EIO;
         return 0;
     }
-    fprintf(stderr, "fp open gguf: %p\n", file->fp);
-    // if (ZIP_READ32(buf) == ZIP_READ32("GGUF")) {
-        // fprintf(stderr, "THIS IS A gguf file\n");
-        errno = EINVAL;
-        return file;
-    // }
 
-
-    // otherwise assume user opened a .zip or .llamafile
-    llamafile_close(file);
-    return llamafile_open_zip(fname, 0, mode);
+    // TODO check for gguf magic without ZIP READ
+    // TODO move this to it's own function to not mess with the orignal llamafile code
+    errno = EINVAL;
+    return file;
 }
 
 FILE *llamafile_fp(struct llamafile *file) {
