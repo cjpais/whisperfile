@@ -9,3 +9,5 @@
 /perf.data.old
 
 /*.log
+
+/whisper-test

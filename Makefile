@@ -12,7 +12,6 @@ include build/config.mk
 include build/rules.mk
 
 include llamafile/BUILD.mk
-include llama.cpp/BUILD.mk
 include whisper.cpp/BUILD.mk
 
 # the root package is `o//` by default
