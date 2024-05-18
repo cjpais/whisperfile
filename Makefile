@@ -27,7 +27,7 @@ install:	llamafile/zipalign.1					\
 		o/$(MODE)/whisper.cpp/server/server \
 	mkdir -p $(PREFIX)/bin
 	$(INSTALL) o/$(MODE)/llamafile/zipalign $(PREFIX)/bin/zipalign
-	$(INSTALL) o/$(MODE)/whisper.cpp/server/server $(PREFIX)/bin/whisper-server
+	$(INSTALL) o/$(MODE)/whisper.cpp/server/server $(PREFIX)/bin/whisperfile
 	$(INSTALL) build/llamafile-convert $(PREFIX)/bin/llamafile-convert
 	$(INSTALL) build/llamafile-upgrade-engine $(PREFIX)/bin/llamafile-upgrade-engine
 	mkdir -p $(PREFIX)/share/man/man1
