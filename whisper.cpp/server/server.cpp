@@ -14,6 +14,7 @@
 #include <vector>
 #include <cstring>
 #include <sstream>
+#include <chrono>
 
 #if defined(_MSC_VER)
 #pragma warning(disable: 4244 4267) // possible loss of data
@@ -749,6 +750,7 @@ int main(int argc, char ** argv) {
         }
 
         // run the inference
+        float t_total;
         {
             printf("Running whisper.cpp inference on %s\n", filename.c_str());
             whisper_full_params wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
@@ -828,12 +830,15 @@ int main(int argc, char ** argv) {
                 wparams.abort_callback_user_data = &is_aborted;
             }
 
+            // time the processing
+            auto t_start = std::chrono::high_resolution_clock::now();
             if (whisper_full_parallel(ctx, wparams, pcmf32.data(), pcmf32.size(), params.n_processors) != 0) {
                 fprintf(stderr, "%s: failed to process audio\n", argv[0]);
                 const std::string error_resp = "{\"error\":\"failed to process audio\"}";
                 res.set_content(error_resp, "application/json");
                 return;
             }
+            t_total = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t_start).count();
         }
 
         // return results to user
@@ -893,6 +898,7 @@ int main(int argc, char ** argv) {
                 {"language", whisper_lang_str_full(whisper_full_lang_id(ctx))},
                 {"duration", float(pcmf32.size())/WHISPER_SAMPLE_RATE},
                 {"text", results},
+                {"transcribe_time", t_total},
                 {"segments", json::array()}
             };
             const int n_segments = whisper_full_n_segments(ctx);
