@@ -2,14 +2,14 @@
 
 TMP=$(mktemp -d) || exit
 
-cp llama.cpp/ggml-cuda.cu \
-   llama.cpp/ggml-cuda.h \
-   llama.cpp/ggml-impl.h \
-   llama.cpp/ggml-alloc.h \
-   llama.cpp/ggml-common.h \
-   llama.cpp/ggml-backend.h \
-   llama.cpp/ggml-backend-impl.h \
-   llama.cpp/ggml.h \
+cp whisper.cpp/ggml-cuda.cu \
+   whisper.cpp/ggml-cuda.h \
+   whisper.cpp/ggml-impl.h \
+   whisper.cpp/ggml-alloc.h \
+   whisper.cpp/ggml-common.h \
+   whisper.cpp/ggml-backend.h \
+   whisper.cpp/ggml-backend-impl.h \
+   whisper.cpp/ggml.h \
    llamafile/tinyblas.h \
    llamafile/tinyblas.cu \
    llamafile/llamafile.h \

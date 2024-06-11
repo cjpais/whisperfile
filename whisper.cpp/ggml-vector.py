@@ -1,6 +1,6 @@
 import re
 
-with open('llama.cpp/ggml-vector.h') as f:
+with open('whisper.cpp/ggml-vector.h') as f:
   prototypes = f.read()
 prototypes = [line.replace(';', '') for line in prototypes.split('\n')
               if line.endswith(';') and not line.startswith('//') and '(' in line]
@@ -23,7 +23,7 @@ ARCHS = (
 )
 
 for arch, mac, needs in ARCHS:
-  path = 'llama.cpp/ggml-vector-%s.c' % (arch.replace('_', '-'))
+  path = 'whisper.cpp/ggml-vector-%s.c' % (arch.replace('_', '-'))
   with open(path, 'w') as f:
     f.write('#ifdef %s\n' % (mac))
     for func, proto in FUNCS:
@@ -32,7 +32,7 @@ for arch, mac, needs in ARCHS:
     f.write('#include "ggml-vector.inc"\n')
     f.write('#endif // %s\n' % (mac))
 
-with open('llama.cpp/ggml-vector.cpp', 'w') as f:
+with open('whisper.cpp/ggml-vector.cpp', 'w') as f:
   f.write('#include <cosmo.h>\n')
   f.write('#include <sys/auxv.h>\n')
   f.write('#include <libc/sysv/consts/hwcap.h>\n')

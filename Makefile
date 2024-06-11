@@ -17,8 +17,7 @@ include whisper.cpp/BUILD.mk
 # the root package is `o//` by default
 # building a package also builds its sub-packages
 .PHONY: o/$(MODE)/
-#o/$(MODE)/: o/$(MODE)/llama.cpp o/$(MODE)/llamafile
-o/$(MODE)/: o/$(MODE)/llama.cpp o/$(MODE)/whisper.cpp o/$(MODE)/llamafile 
+o/$(MODE)/: o/$(MODE)/whisper.cpp o/$(MODE)/llamafile 
 
 # for installing to `make PREFIX=/usr/local`
 .PHONY: install
