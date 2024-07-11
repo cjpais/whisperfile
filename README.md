@@ -400,6 +400,16 @@ then its author could have simply modified it to not do that. In that
 case, you can run the untrusted llamafile inside another sandbox, such
 as a virtual machine, to make sure it behaves how you expect. -->
 
+## Building Release
+
+I run the following commands:
+
+```sh
+./llamafile/cuda.sh
+./llamafile/rocm.sh
+zipalign -j0 o/whisper.cpp/server/server ~/ggml-cuda.so ~/ggml-rocm.so
+```
+
 ## Licensing
 
 The whisperfile project is Apache 2.0-licensed.
