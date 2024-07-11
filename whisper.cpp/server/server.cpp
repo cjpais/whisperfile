@@ -138,7 +138,8 @@ void whisper_print_usage(int /*argc*/, char ** argv, const whisper_params & para
     fprintf(stderr, "  --public PATH,                 [%-7s] Path to the public folder\n", sparams.public_path.c_str());
     fprintf(stderr, "  --request-path PATH,           [%-7s] Request path for all requests\n", sparams.request_path.c_str());
     fprintf(stderr, "  --convert,                     [%-7s] Convert audio to WAV, requires ffmpeg on the server\n", sparams.ffmpeg_converter ? "true" : "false");
-    fprintf(stderr, "  --recompile                    [%-7s] Force GPU support to be recompiled at runtime if possible.", FLAG_recompile ? "true" : "false");
+    fprintf(stderr, "  --recompile                    [%-7s] Force GPU support to be recompiled at runtime if possible.\n", FLAG_recompile ? "true" : "false");
+    fprintf(stderr, "  --nocompile                    [%-7s] Never compile GPU support at runtime.", FLAG_nocompile ? "true" : "false");
     fprintf(stderr, "\n");
 }
 
@@ -191,6 +192,7 @@ bool whisper_params_parse(int argc, char ** argv, whisper_params & params, serve
         else if (                  arg == "--request-path")    { sparams.request_path = argv[++i]; }
         else if (                  arg == "--convert")         { sparams.ffmpeg_converter     = true; }
         else if (                  arg == "--recompile")       { FLAG_recompile = true; }
+        else if (                  arg == "--nocompile")       { FLAG_nocompile = true; }
         else {
             fprintf(stderr, "error: unknown argument: %s\n", arg.c_str());
             whisper_print_usage(argc, argv, params, sparams);
@@ -477,7 +479,6 @@ void get_req_parameters(const Request & req, whisper_params & params)
     {
         params.temperature_inc = std::stof(req.get_file_value("temperature_inc").content);
     }
-    // if (req.has_file)
 }
 
 }  // namespace
