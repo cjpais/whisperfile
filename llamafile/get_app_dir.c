@@ -31,5 +31,5 @@ static const char *llamafile_get_home_dir(void) {
  */
 void llamafile_get_app_dir(char *path, size_t size) {
     strlcpy(path, llamafile_get_home_dir(), size);
-    strlcat(path, "/.llamafile/", size);
+    strlcat(path, "/.whisperfile/", size);
 }
