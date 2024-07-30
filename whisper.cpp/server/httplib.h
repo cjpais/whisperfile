@@ -206,6 +206,7 @@ using socket_t = int;
 #endif //_WIN32
 
 #include <algorithm>
+#include <exception>
 #include <array>
 #include <atomic>
 #include <cassert>

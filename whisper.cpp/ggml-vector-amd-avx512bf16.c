@@ -40,7 +40,6 @@
 #define ggml_vec_leaky_relu_f32 ggml_vec_leaky_relu_f32_amd_avx512bf16
 #define ggml_vec_hardswish_f32 ggml_vec_hardswish_f32_amd_avx512bf16
 #define ggml_vec_hardsigmoid_f32 ggml_vec_hardsigmoid_f32_amd_avx512bf16
-#define ggml_vec_gelu_f16 ggml_vec_gelu_f16_amd_avx512bf16
 #define ggml_vec_gelu_f32 ggml_vec_gelu_f32_amd_avx512bf16
 #define ggml_vec_gelu_quick_f32 ggml_vec_gelu_quick_f32_amd_avx512bf16
 #define ggml_vec_silu_f32 ggml_vec_silu_f32_amd_avx512bf16
@@ -49,10 +48,12 @@
 #define ggml_vec_sum_f32 ggml_vec_sum_f32_amd_avx512bf16
 #define ggml_vec_sum_f32_ggf ggml_vec_sum_f32_ggf_amd_avx512bf16
 #define ggml_vec_sum_f16_ggf ggml_vec_sum_f16_ggf_amd_avx512bf16
+#define ggml_vec_sum_bf16_ggf ggml_vec_sum_bf16_ggf_amd_avx512bf16
 #define ggml_vec_max_f32 ggml_vec_max_f32_amd_avx512bf16
-#define ggml_vec_norm_inv_f32 ggml_vec_norm_inv_f32_amd_avx512bf16
 #define ggml_vec_argmax_f32 ggml_vec_argmax_f32_amd_avx512bf16
 #define ggml_vec_soft_max_f32 ggml_vec_soft_max_f32_amd_avx512bf16
+#define ggml_vec_norm_inv_f32 ggml_vec_norm_inv_f32_amd_avx512bf16
+#define ggml_vec_sigmoid_f32 ggml_vec_sigmoid_f32_amd_avx512bf16
 #define GGML_VECTOR
 #include "ggml-vector.inc"
 #endif // __x86_64__

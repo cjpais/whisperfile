@@ -12,9 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef NDEBUG
-#define NDEBUG // [jart] delete printf debugging
-#endif
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -1188,9 +1185,9 @@ static int ggml_backend_sched_backend_id_from_cur(ggml_backend_sched_t sched, st
 static char * fmt_size(size_t size) {
     static char buffer[128];
     if (size >= 1024*1024) {
-        sprintf(buffer, "%zuM", size/1024/1024);
+        snprintf(buffer, sizeof(buffer), "%zuM", size/1024/1024);
     } else {
-        sprintf(buffer, "%zuK", size/1024);
+        snprintf(buffer, sizeof(buffer), "%zuK", size/1024);
     }
     return buffer;
 }
@@ -1870,6 +1867,15 @@ int ggml_backend_sched_get_n_copies(ggml_backend_sched_t sched) {
     return sched->n_copies;
 }
 
+int ggml_backend_sched_get_n_backends(ggml_backend_sched_t sched) {
+    return sched->n_backends;
+}
+
+ggml_backend_t ggml_backend_sched_get_backend(ggml_backend_sched_t sched, int i) {
+    GGML_ASSERT(i >= 0 && i < sched->n_backends);
+    return sched->backends[i];
+}
+
 size_t ggml_backend_sched_get_buffer_size(ggml_backend_sched_t sched, ggml_backend_t backend) {
     int backend_index = ggml_backend_sched_backend_id(sched, backend);
     GGML_ASSERT(backend_index >= 0 && backend_index < sched->n_backends);
@@ -1901,7 +1907,6 @@ void ggml_backend_view_init(ggml_backend_buffer_t buffer, struct ggml_tensor * t
 
     tensor->buffer = buffer;
     tensor->data = (char *)tensor->view_src->data + tensor->view_offs;
-    tensor->backend = tensor->view_src->backend;
     ggml_backend_buffer_init_tensor(buffer, tensor);
 }
 

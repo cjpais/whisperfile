@@ -29,6 +29,7 @@ bool FLAG_nogpu;
 bool FLAG_tinyblas;
 bool FLAG_nocompile;
 bool FLAG_recompile;
+int FLAG_flash_attn;
 
 const char *llamafile_describe_gpu(void) {
     switch (FLAG_gpu) {
