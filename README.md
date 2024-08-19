@@ -1,3 +1,9 @@
+# Notice
+
+**This code has been [merged](https://github.com/Mozilla-Ocho/llamafile/pull/517) into [llamafile](https://github.com/Mozilla-Ocho/llamafile). All future work will be done in that repo!**
+
+The original README for the project is below.
+
 # whisperfile
 
 This is a fork of [llamafile](https://github.com/Mozilla-Ocho/llamafile) which builds llamafiles for [whisper.cpp](https://github.com/ggerganov/whisper.cpp). A huge credit and thanks to the original authors of these wonderful projects.
