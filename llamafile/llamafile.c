@@ -295,6 +295,10 @@ struct llamafile *llamafile_open_gguf(const char *fname, const char *mode) {
         errno = EIO;
         return 0;
     }
+    if (ZIP_READ32(buf) == ZIP_READ32("GGUF") || ZIP_READ32(buf) == ZIP_READ32("ggml")) {
+        errno = EINVAL;
+        return file;
+    }
 
     // TODO check for gguf magic without ZIP READ
     // TODO move this to it's own function to not mess with the orignal llamafile code
